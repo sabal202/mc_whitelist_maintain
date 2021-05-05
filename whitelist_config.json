@@ -1,0 +1,20 @@
+{
+    "destinations": [
+        {
+            "name": "FTB Endeavour",
+            "host": "localhost",
+            "port": 25575,
+            "password": "1234"
+        },
+        {
+            "name": "Vanilla preview",
+            "host": "localhost",
+            "port": 25576,
+            "password": "1234"
+        }
+    ],
+    "paths": {
+        "Vanilla preview": "vanila-pre/",
+        "FTB Endeavour": "endeavour-1.3.0/"
+    }
+}
