@@ -1,26 +1,10 @@
-from typing import Dict, List, Set
-from mcrcon import MCRcon
 import click
-import os
 import json
-from mojang import MojangAPI
+import os
 from enum import Enum
-
-"""
-whitelist add <targets>
-whitelist list
-whitelist off
-whitelist on
-whitelist reload
-whitelist remove <targets>
-
-whitelist --native add <targets>
-whitelist --native list
-whitelist --native off
-whitelist --native on
-whitelist --native reload
-whitelist --native remove <targets>
-"""
+from typing import Dict, List
+from mcrcon import MCRcon
+from mojang import MojangAPI
 
 
 class Keys(Enum):
@@ -67,7 +51,12 @@ class Whitelist:
         return f'Whitelist with {len(self._usernames)} usernames: ' \
             ", ".join([name for name in self._usernames.keys()])
 
-    def add(self, targets) -> None:
+    def add(self, targets: List[str]) -> None:
+        """Add usernames to whitelist
+
+        Args:
+            targets (List[str]): usernames to add
+        """
         update = {}
         for target in targets:
             try:
@@ -79,7 +68,12 @@ class Whitelist:
         self._usernames.update(update)
         self.save()
 
-    def remove(self, targets):
+    def remove(self, targets: List[str]) -> None:
+        """Remove usernames to whitelist
+
+        Args:
+            targets (List[str]): usernames to remove
+        """
         for target in targets:
             if target in self._usernames:
                 self._usernames.pop(target)
@@ -157,23 +151,30 @@ def manual(ctx, whitelist_path):
 @click.argument('targets', nargs=-1, required=True, type=click.STRING)
 @click.pass_context
 def add(ctx, targets):
+    """Add usernames to whitelist"""
     ctx.obj[Keys.OBJ].add(targets)
-    
+
+
 @manual.command()
 @click.argument('targets', nargs=-1, required=True, type=click.STRING)
 @click.pass_context
 def remove(ctx, targets):
+    """Remove usernames to whitelist"""
     ctx.obj[Keys.OBJ].remove(targets)
+
 
 @manual.command()
 @click.pass_context
 def list(ctx):
+    """Print whitelisted usernames"""
     ctx.obj[Keys.OBJ].list()
+
 
 @rcon.command()
 @click.argument('targets', nargs=-1, required=True, type=click.STRING)
 @click.pass_context
 def add(ctx, targets):
+    """Add usernames to whitelist"""
     cmd = f'/whitelist add {" ".join(targets)}'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
@@ -184,6 +185,7 @@ def add(ctx, targets):
 @click.argument('targets', nargs=-1)
 @click.pass_context
 def remove(ctx, targets):
+    """Remove usernames to whitelist"""
     cmd = f'/whitelist remove {" ".join(targets)}'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
@@ -193,6 +195,7 @@ def remove(ctx, targets):
 @rcon.command()
 @click.pass_context
 def list(ctx):
+    """Print whitelisted usernames"""
     cmd = '/whitelist list'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
@@ -202,6 +205,7 @@ def list(ctx):
 @rcon.command()
 @click.pass_context
 def on(ctx):
+    """On whitelist on servers"""
     cmd = '/whitelist on'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
@@ -211,6 +215,7 @@ def on(ctx):
 @rcon.command()
 @click.pass_context
 def off(ctx):
+    """Off whitelist on servers"""
     cmd = '/whitelist off'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
@@ -220,6 +225,7 @@ def off(ctx):
 @rcon.command()
 @click.pass_context
 def reload(ctx):
+    """Reload whitelist on servers"""
     cmd = '/whitelist reload'
     for dest in ctx.obj[Keys.DESTINATIONS]:
         click.echo(f'Command to {dest["name"]}')
